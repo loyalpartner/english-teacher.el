@@ -29,6 +29,7 @@
   (format "%s?%s" "https://translate.google.cn/translate_a/single"
           (english-teacher-format-query-string query-params)))
 
+;;;###autoload
 (defun english-teacher-backend-google-request (from to text)
   (let* ((url (english-teacher-backend-google--build-url from to text))
          result json)
@@ -38,6 +39,7 @@
     (setq result (mapconcat (lambda (x) (elt x 0)) json ""))
     `(,text . ,result)))
 
+;;;###autoload
 (cl-defmethod english-teacher-translate ((text  t) (backend (eql english-teacher-backend-google)))
   (english-teacher-backend-google-request "en" "zh-cn" text))
 
