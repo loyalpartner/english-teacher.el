@@ -22,3 +22,6 @@ use-package 设置
           Man-mode
           Woman-Mode) . english-teacher-follow-mode))
 #+END_SRC
+
+选择后端： M-x ~english-teacher-choose-backend~ 
+切换后端:  M-x ~english-teacher-next-backend~
