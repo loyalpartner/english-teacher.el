@@ -1,0 +1,24 @@
+
+
+当你在阅读英文文档时，English Teacher 可以像英语老师一样给你关心和关爱，手把手给你翻译英文句子。
+
+English Teacher 支持 google, baidu 后端。
+
+默认使用 google 翻译，如果你需要默认百度翻译
+
+#+BEGIN_SRC emacs-lisp
+(setq english-teacher-backend 'baidu
+      english-teacher-backend-baidu-appid "xxxxxxx"
+      english-teacher-backend-baidu-secret-key "XXXXXXXXXXX")
+#+END_SRC
+
+use-package 设置
+
+#+BEGIN_SRC emacs-lisp
+(use-package! english-teacher
+  :hook ((Info-mode
+          elfeed-show-mode
+          eww-mode
+          Man-mode
+          Woman-Mode) . english-teacher-follow-mode))
+#+END_SRC
