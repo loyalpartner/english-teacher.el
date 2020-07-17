@@ -3,7 +3,8 @@
 (defcustom english-teacher-backends-alist
   '((google . english-teacher-backend-google)
     (baidu . english-teacher-backend-baidu)
-    (youdao . english-teacher-backend-youdao))
+    ;; (youdao . english-teacher-backend-youdao)
+    )
   "backends alist"
   :type '(list))
 
@@ -138,6 +139,17 @@
   (interactive)
   (when-let (backend (intern (completing-read "Choose On:" (mapcar #'car english-teacher-backends-alist))))
     (setq english-teacher-backend backend)
+    (english-teacher-follow-mode-translate)))
+
+(defun english-teacher-next-backend ()
+  (interactive)
+  (let* ((backends (mapcar #'car english-teacher-backends-alist))
+         (backend english-teacher-backend)
+         (backend-index (seq-position backends backend)))
+    (setq english-teacher-backend
+          (if (< backend-index (- (length backends) 1))
+              (elt backends (+ backend-index 1))
+            (elt backends 0)))
     (english-teacher-follow-mode-translate)))
 
 (provide 'english-teacher-core)
