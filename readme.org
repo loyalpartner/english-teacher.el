@@ -25,6 +25,7 @@ English Teacher 支持 google, baidu , youdao 后端。
 
 ** 选择后端： M-x ~english-teacher-choose-backend~ 
 ** 切换后端:  M-x ~english-teacher-next-backend~
+建议绑定一个方便的快捷键，如果一个翻译不准确，可以迅速切换到另一个后端。
 
 ** 自定义后端  
 
