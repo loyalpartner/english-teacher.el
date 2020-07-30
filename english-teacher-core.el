@@ -35,7 +35,7 @@
 (defun english-teacher-follow-mode-translate ()
   (when english-teacher-timer (cancel-timer english-teacher-timer))
 
-  ;; (require (alist-get english-teacher-backend english-teacher-backends-alist))
+  (require (alist-get english-teacher-backend english-teacher-backends-alist))
   (let* ((sentence (english-teacher-sentence-at-point))
          cache func args)
     (when sentence
