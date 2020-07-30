@@ -23,11 +23,6 @@
   ""
   :type 'function)
 
-(defcustom english-teacher-format-result-function
-  'english-teacher-default-format-result-function
-  ""
-  :type 'function)
-
 (define-minor-mode english-teacher-follow-mode
   "follow mode"
   :lighter ""
@@ -46,7 +41,7 @@
     (when sentence
       (setq cache (english-teacher-get-cache sentence))
       (setq func (if cache english-teacher-show-result-function #'english-teacher-translate-sentence))
-      (setq args (if cache (list (funcall english-teacher-format-result-function sentence cache)) (list sentence)))
+      (setq args (if cache (list sentence cache) (list sentence)))
       (english-teacher-lazy-execute func args))))
 
 (defun english-teacher-translate-sentence (sentence)
@@ -54,7 +49,7 @@
          (origin (car result))
          (translation (cdr result)))
     (engilsh-teacher-put-cache origin translation)
-    (funcall english-teacher-show-result-function (funcall english-teacher-format-result-function origin translation))))
+    (funcall english-teacher-show-result-function origin translation)))
 
 ;; (english-teacher-translate-sentence "hello world. i love you.")
 

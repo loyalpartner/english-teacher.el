@@ -12,7 +12,7 @@ English Teacher 支持 google, baidu , youdao 后端。
       english-teacher-backend-baidu-secret-key "XXXXXXXXXXX")
 #+END_SRC
 
-use-package 设置
+** use-package 设置
 
 #+BEGIN_SRC emacs-lisp
 (use-package! english-teacher
@@ -23,10 +23,10 @@ use-package 设置
           Woman-Mode) . english-teacher-follow-mode))
 #+END_SRC
 
-选择后端： M-x ~english-teacher-choose-backend~ 
-切换后端:  M-x ~english-teacher-next-backend~
+** 选择后端： M-x ~english-teacher-choose-backend~ 
+** 切换后端:  M-x ~english-teacher-next-backend~
 
-自定义后端  
+** 自定义后端  
 
 实现 ~english-teacher-translate~ 这个多态方法,
 这个方法接受要翻译的文本，
@@ -41,3 +41,19 @@ use-package 设置
 #+BEGIN_SRC emacs-lisp
 (add-to-list english-teacher-backends-alist 'your-backend)
 #+END_SRC
+** 用 eldoc 显示翻译结果
+#+BEGIN_SRC emacs-lisp
+(setq english-teacher-show-result-function 'english-teacher-eldoc-show-result-function)
+#+END_SRC
+
+**  自定义显示方式
+#+begin_src emacs-lisp :tangle yes
+;;;###autoload
+(defun english-teacher-eldoc-show-result-function (origin translation)
+  (eldoc-message (format "%s:%s"
+                         (symbol-name english-teacher-backend)
+                         translation)))
+
+(setq english-teacher-show-result-function 'english-teacher-eldoc-show-result-function)
+#+end_src
+
