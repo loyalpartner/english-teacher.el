@@ -54,7 +54,7 @@
 ;; (english-teacher-translate-sentence "hello world. i love you.")
 
 (defun english-teacher-http-get (url)
-  (with-current-buffer (url-retrieve-synchronously url t)
+  (with-current-buffer (url-retrieve-synchronously url t nil 2)
     (set-buffer-multibyte t)
     (goto-char (point-min))
     (when (not (string-match "200 OK" (buffer-string)))
@@ -68,7 +68,7 @@
   (let* ((url-request-method        "POST")
          (url-request-extra-headers headers)
          (url-request-data data))
-    (with-current-buffer (url-retrieve-synchronously url t)
+    (with-current-buffer (url-retrieve-synchronously url t nil 2)
       (set-buffer-multibyte t)
       (goto-char (point-min))
       (when (not (string-match "200 OK" (buffer-string)))
