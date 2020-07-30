@@ -32,6 +32,13 @@
                                       (add-hook 'post-command-hook #'english-teacher-follow-mode-translate nil t)))
         (t (remove-hook 'post-command-hook #'english-teacher-follow-mode-translate t))))
 
+(defmacro english-teacher-lazy-execute (func args)
+  `(setq english-teacher-timer
+         (run-with-idle-timer
+          0.5 nil
+          (lambda (args) (apply func args))
+          args)))
+
 (defun english-teacher-follow-mode-translate ()
   (when english-teacher-timer (cancel-timer english-teacher-timer))
 
@@ -125,13 +132,6 @@
   (puthash key value (alist-get english-teacher-backend english-teacher-translation-cache-alist)))
 
 (defvar english-teacher-timer nil)
-
-(defmacro english-teacher-lazy-execute (func args)
-  `(setq english-teacher-timer
-         (run-with-idle-timer
-          0.5 nil
-          (lambda (args) (apply func args))
-          args)))
 
 (defun english-teacher-choose-backend ()
   (interactive)
