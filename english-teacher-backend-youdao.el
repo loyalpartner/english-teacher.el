@@ -2,69 +2,60 @@
 
 (defconst english-teacher-backend-youdao-api-host "http://fanyi.youdao.com/translate_o?smartresult=dict&smartresult=rule")
 
-(defcustom english-teacher-backend-youdao-appkey "4c6f4b914908b8af"
-  "baidu appid"
-  :type 'string)
+;; https://zhuanlan.zhihu.com/p/95036714
+(defcustom english-teacher-backend-magic-string "mmbP%A-r6U3Nw(n]BjuEU" "magic string")
 
-(defcustom english-teacher-backend-youdao-secret-key "ZYwM1xhbq7gJmk0peuHopBucGUO9JSEG"
-  "baidu secret key"
-  :type 'string)
+(defun english-teacher-backend-youdao-ts ()
+  (truncate (* (time-to-seconds) 1000)) )
+
+(defun english-teacher-backend-youdao-salt ()
+  (english-teacher-backend-youdao-ts))
+
+(defun english-teacher-backend-youdao-sign (text)
+  (let ((salt (english-teacher-backend-youdao-salt))
+        (ts (english-teacher-backend-youdao-ts)))
+    (md5 (format "fanyideskweb%s%d%s" text salt english-teacher-backend-magic-string))))
 
 
-(defun english-teacher-backend-youdao--build-post-data (from to text)
-  (let* ((salt (number-to-string (truncate (time-to-seconds))))
-         (sign (english-teacher-backend-youdao-generate-sign text salt))
-         (ts (number-to-string (truncate (* 1000 (time-to-seconds))))))
+(defun english-teacher-backend-youdao-post-data (from to text)
+  (let* ((salt (number-to-string (english-teacher-backend-youdao-salt)))
+         (sign (english-teacher-backend-youdao-sign text))
+         (ts (number-to-string (english-teacher-backend-youdao-ts))))
     (english-teacher-format-query-string
      `(("i"        . ,text)
        ("from"     . ,from)
        ("to"     . ,to)
        ("smartresult"     . "dict")
        ("client"     . "fanyideskweb")
-       ;; ("salt"     . ,salt)
-       ;; ("sign"   . ,sign)
-       ;; ("ts"     . ,ts)
-       ;; ("bv"       . ,(md5 "2.1"))
+       ("salt"     . ,salt)
+       ("sign"   . ,sign)
+       ("ts"     . ,ts)
+       ("bv"       . "9b36851b1c8e76d933a5d868c45f3c47")
        ("doctype"       . "json")
        ("version"       . "2.1")
        ("keyfrom" . "fanyi.web")
        ("typoResult" . "false")
        ("action"     . "FY_BY_CLICKBUTTION")))))
 
-(print (english-teacher-backend-youdao--build-post-data "auto" "auto" "i love you"))
-
-(english-teacher-http-post english-teacher-backend-youdao-api-host
-                         (english-teacher-backend-youdao--build-post-data "AUTO" "AUTO" "i love you"))
-
-
-(defun english-teacher-backend-youdao-generate-sign (text salt)
-  (let ((origin (format
-                 "%s%s%s%s%s"
-                 "fanyideskweb"
-                 text
-                 salt
-                 "n%A-rKaT5fb[Gy?;N5@Tj"
-                 baidu-translator-secret-key)))
-    (md5 origin)))
-
 ;;;###autoload
 (defun english-teacher-backend-youdao-request (from to text)
-  (let* ((url (english-teacher-backend-youdao--build-url from to text))
+  (let* ((url english-teacher-backend-youdao-api-host)
+         (headers `(("Cookie" . "OUTFOX_SEARCH_USER_ID=1389460813@123.125.1.12")
+                    ("Referer" . "http://fanyi.youdao.com/")
+                    ("Content-Type" . "application/x-www-form-urlencoded")
+                    ("User-Agent" . "Mozilla/5.0 (Macintosh; Intel Mac OSX10_14_2) AppleWebKit/537.36(KHTML, like Gecko) Chrome/75.0.3770.100 Safari/537.36")))
+         (data (english-teacher-backend-youdao-post-data from to text))
          result json)
-    (setq result (english-teacher-http-get url))
+    (setq result (english-teacher-http-post url data headers))
     (setq json (json-read-from-string result))
-    (setq result  (alist-get 'trans_result json))
+    (setq result (alist-get 'translateResult json))
     (if result
-        (setq result (mapconcat (lambda (x) (alist-get 'dst x)) result ""))
-      (error (alist-get 'error_msg json)))
-    
-    `(,text . ,result)))
-
-(print (english-teacher-backend-youdao--build-url "auto" "auto" "i love you"))
-(english-teacher-backend-youdao-request "auto" "auto" "i love you")
+        (setq result (mapconcat (lambda (x) (alist-get 'tgt x)) (elt result 0) ""))
+      (error "error"))
+    (cons text result)))
 
 ;;;###autoload
 (cl-defmethod english-teacher-translate ((text  t) (backend (eql english-teacher-backend-youdao)))
-  (english-teacher-backend-youdao-request "auto" "auto" text))
+  (english-teacher-backend-youdao-request "AUTO" "AUTO" text))
 
 (provide 'english-teacher-backend-youdao)

@@ -3,7 +3,7 @@
 (defcustom english-teacher-backends-alist
   '((google . english-teacher-backend-google)
     (baidu . english-teacher-backend-baidu)
-    ;; (youdao . english-teacher-backend-youdao)
+    (youdao . english-teacher-backend-youdao)
     )
   "backends alist"
   :type '(list))
@@ -69,9 +69,9 @@
         (buffer-substring-no-properties (point) (point-max))
       (kill-buffer))))
 
-(defun english-teacher-http-post (url data)
+(defun english-teacher-http-post (url data &optional headers)
   (let* ((url-request-method        "POST")
-         (url-request-extra-headers `(("Content-Type" . "application/x-www-form-urlencoded")))
+         (url-request-extra-headers headers)
          (url-request-data data))
     (with-current-buffer (url-retrieve-synchronously url t)
       (set-buffer-multibyte t)
@@ -121,7 +121,10 @@
   (cons "orgin" "translation"))
 
 (defun english-teacher-get-cache (key)
-  (gethash key (alist-get english-teacher-backend english-teacher-translation-cache-alist)))
+  (if-let ((cache (alist-get english-teacher-backend english-teacher-translation-cache-alist)))
+      (gethash key cache)
+    (add-to-list 'english-teacher-translation-cache-alist (cons english-teacher-backend (make-hash-table :test 'equal)))
+    nil))
 
 (defun engilsh-teacher-put-cache (key value)
   (puthash key value (alist-get english-teacher-backend english-teacher-translation-cache-alist)))

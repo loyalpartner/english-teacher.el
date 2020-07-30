@@ -2,7 +2,7 @@
 
 当你在阅读英文文档时，English Teacher 可以像英语老师一样给你关心和关爱，手把手给你翻译英文句子。
 
-English Teacher 支持 google, baidu 后端。
+English Teacher 支持 google, baidu , youdao 后端。
 
 默认使用 google 翻译，如果你需要默认百度翻译
 
@@ -25,3 +25,19 @@ use-package 设置
 
 选择后端： M-x ~english-teacher-choose-backend~ 
 切换后端:  M-x ~english-teacher-next-backend~
+
+自定义后端  
+
+实现 ~english-teacher-translate~ 这个多态方法,
+这个方法接受要翻译的文本，
+返回值的格式为 (cons result origin)
+#+BEGIN_SRC emacs-lisp
+;;;###autoload
+(cl-defmethod english-teacher-translate ((text  t) (backend (eql english-teacher-backend-youdao)))
+  (english-teacher-backend-youdao-request "AUTO" "AUTO" text))
+#+END_SRC
+
+随后添加你的后端到 ~english-teacher-backends-alist~
+#+BEGIN_SRC emacs-lisp
+(add-to-list english-teacher-backends-alist 'your-backend)
+#+END_SRC

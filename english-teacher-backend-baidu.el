@@ -9,7 +9,6 @@
   "baidu secret key"
   :type 'string)
 
-
 (defun english-teacher-backend-baidu--build-url (from to text)
   (let* ((salt (number-to-string (random)))
          (sign (english-teacher-backend-baidu-generate-sign text salt)))
