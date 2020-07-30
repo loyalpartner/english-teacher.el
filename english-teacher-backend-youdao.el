@@ -1,5 +1,4 @@
-;;; .local/straight/repos/english-teacher.el/english-teacher-backend-youdao.el -*- lexical-binding: t; -*-
-
+;;; -*- lexical-binding: t;no-byte-compile:t;  -*-
 (defconst english-teacher-backend-youdao-api-host "http://fanyi.youdao.com/translate_o?smartresult=dict&smartresult=rule")
 
 ;; https://zhuanlan.zhihu.com/p/95036714

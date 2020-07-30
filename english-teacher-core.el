@@ -1,4 +1,4 @@
-;;; .local/straight/repos/english-teacher.el/english-teacher-core.el -*- lexical-binding: t; -*-
+;;; -*- lexical-binding: t;no-byte-compile:t;  -*-
 
 (defcustom english-teacher-backends-alist
   '((google . english-teacher-backend-google)

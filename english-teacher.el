@@ -1,4 +1,4 @@
-;;; .local/straight/repos/english-teacher.el/english-teacher.el -*- lexical-binding: t; -*-
+;;; -*- lexical-binding: t;no-byte-compile:t;  -*-
 
 (require 'english-teacher-ui)
 (require 'english-teacher-core)

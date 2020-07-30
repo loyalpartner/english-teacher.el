@@ -1,4 +1,5 @@
-;;; .local/straight/repos/english-teacher.el/english-teacher-backend-baidu.el -*- lexical-binding: t; -*-
+;;; -*- lexical-binding: t;no-byte-compile:t;  -*-
+
 (defconst english-teacher-backend-baidu-api-host "https://api.fanyi.baidu.com/api/trans/vip/translate")
 
 (defcustom english-teacher-backend-baidu-appid "20200607000488675"
@@ -30,7 +31,7 @@
                  english-teacher-backend-baidu-appid
                  text
                  salt
-                 baidu-translator-secret-key)))
+                 english-teacher-backend-baidu-secret-key)))
     (md5 origin nil nil (coding-system-from-name "utf-8"))))
 
 ;;;###autoload

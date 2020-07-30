@@ -1,4 +1,4 @@
-;;; .local/straight/repos/english-teacher-backend-google.el/english-teacher-backend-google-backend-google.el -*- lexical-binding: t; -*-
+;;; -*- lexical-binding: t;no-byte-compile:t;  -*-
 
 (defun english-teacher-backend-google--build-url (from to text)
   (english-teacher-backend-google--format-url

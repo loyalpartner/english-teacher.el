@@ -1,4 +1,4 @@
-;;; .local/straight/repos/english-teacher.el/english-teacher-ui.el -*- lexical-binding: t; -*-
+;;; -*- lexical-binding: t;no-byte-compile:t;  -*-
 
 ;;;###autoload
 ;; (defun english-teacher-default-format-result-function (origin translation)
