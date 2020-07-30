@@ -1,4 +1,4 @@
-
+#+html: <p align="center"><img src="./english-teacher.gif" /></p>
 
 当你在阅读英文文档时，English Teacher 可以像英语老师一样给你关心和关爱，手把手给你翻译英文句子。
 
