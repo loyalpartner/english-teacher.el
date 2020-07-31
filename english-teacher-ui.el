@@ -9,7 +9,7 @@
   (require 'posframe)
   (when (posframe-workable-p)
     (posframe-show
-     "*english-teacher*"
+     " *english-teacher*"
      :string (concat (symbol-name english-teacher-backend) "\n" origin "\n" translation)
      :timeout 100
      :poshandler 'posframe-poshandler-frame-bottom-center
@@ -17,13 +17,12 @@
      :internal-border-width 10)
     (unwind-protect
         (push (read-event) unread-command-events)
-      (posframe-delete "*english-teacher*"))))
+      (posframe-hide " *english-teacher*"))))
 
 ;;;###autoload
 (defun english-teacher-eldoc-show-result-function (origin translation)
   (eldoc-message (format "%s:%s"
                          (symbol-name english-teacher-backend)
                          translation)))
-
 
 (provide 'english-teacher-ui)
