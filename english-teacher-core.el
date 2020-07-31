@@ -1,10 +1,10 @@
 ;;; -*- lexical-binding: t;no-byte-compile:t;  -*-
 
 (defcustom english-teacher-backends-alist
-  '((google . english-teacher-backend-google)
-    (baidu . english-teacher-backend-baidu)
-    (youdao . english-teacher-backend-youdao)
-    )
+  '((youdao . english-teacher-backend-youdao)
+    (bing . english-teacher-backend-bing)
+    (google . english-teacher-backend-google)
+    (baidu . english-teacher-backend-baidu))
   "backends alist"
   :type '(list))
 
