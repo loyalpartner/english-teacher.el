@@ -32,6 +32,8 @@
                                       (add-hook 'post-command-hook #'english-teacher-follow-mode-translate nil t)))
         (t (remove-hook 'post-command-hook #'english-teacher-follow-mode-translate t))))
 
+(defvar english-teacher-timer nil)
+
 (defmacro english-teacher-lazy-execute (func args)
   `(setq english-teacher-timer
          (run-with-idle-timer
@@ -58,7 +60,6 @@
     (engilsh-teacher-put-cache origin translation)
     (funcall english-teacher-show-result-function origin translation)))
 
-;; (english-teacher-translate-sentence "hello world. i love you.")
 
 (defun english-teacher-http-get (url)
   (with-current-buffer (url-retrieve-synchronously url t nil 2)
@@ -131,15 +132,15 @@
 (defun engilsh-teacher-put-cache (key value)
   (puthash key value (alist-get english-teacher-backend english-teacher-translation-cache-alist)))
 
-(defvar english-teacher-timer nil)
-
 (defun english-teacher-choose-backend ()
+  "Select the backend of the list inside"
   (interactive)
   (when-let (backend (intern (completing-read "Choose On:" (mapcar #'car english-teacher-backends-alist))))
     (setq english-teacher-backend backend)
     (english-teacher-follow-mode-translate)))
 
 (defun english-teacher-next-backend ()
+  "Select the next backend"
   (interactive)
   (let* ((backends (mapcar #'car english-teacher-backends-alist))
          (backend english-teacher-backend)
@@ -149,5 +150,57 @@
               (elt backends (+ backend-index 1))
             (elt backends 0)))
     (english-teacher-follow-mode-translate)))
+
+(defun english-teacher-in-comment-p ()
+  "Test if character at POS is comment.  If POS is nil, character at `(point)' is tested"
+  (let* ((pos (point))
+         (fontfaces (get-text-property pos 'face)))
+    (when (not (listp fontfaces))
+      (setf fontfaces (list fontfaces)))
+    (delq nil
+          (mapcar #'(lambda (f)
+                      ;; learn this trick from flyspell
+                      (or (eq f 'font-lock-comment-face)
+                          (eq f 'font-lock-comment-delimiter-face)))
+                  fontfaces))))
+
+(defun english-teacher-in-string-p ()
+  (nth 3 (syntax-ppss)))
+
+(defun english-teacher-string-at-point ()
+  (let ((beg (point))
+        (end (point)))
+    (save-excursion
+      (while (english-teacher-in-string-p)
+        (setq beg (point))
+        (backward-char)))
+    (save-excursion
+      (while (english-teacher-in-string-p)
+        (setq end (point))
+        (forward-char)))
+    (buffer-substring-no-properties beg end)))
+
+(defun english-teacher-comment-at-point ()
+  (let ((beg (point))
+        (end (point)))
+    (save-excursion
+      (while (english-teacher-in-comment-p)
+        (setq beg (point))
+        (backward-char)))
+    (save-excursion
+      (while (english-teacher-in-comment-p)
+        (setq end (point))
+        (forward-char)))
+    (buffer-substring-no-properties beg end)))
+
+(defun english-teacher-smart-translate (text)
+  "Intelligent translation"
+  (interactive (list (cond ((region-active-p) (buffer-substring-no-properties (region-beginning) (region-end)))
+                           ((english-teacher-in-comment-p) (english-teacher-comment-at-point))
+                           ((english-teacher-in-string-p) (english-teacher-string-at-point))
+                           (t (english-teacher-sentence-at-point)))))
+  (let ((english-teacher-show-result-function 'english-teacher-default-show-result-function))
+    (english-teacher-translate-sentence text)
+    (when (region-active-p) (deactivate-mark))))
 
 (provide 'english-teacher-core)

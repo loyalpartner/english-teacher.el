@@ -15,7 +15,8 @@ English Teacher 支持 google, baidu , youdao 后端。
 ** use-package 设置
 
 #+BEGIN_SRC emacs-lisp
-(use-package! english-teacher
+(use-package english-teacher
+  :load-path "english-teacher-path" ;; NOTE: here type english teacher directory
   :hook ((Info-mode
           elfeed-show-mode
           eww-mode
@@ -23,9 +24,10 @@ English Teacher 支持 google, baidu , youdao 后端。
           Woman-Mode) . english-teacher-follow-mode))
 #+END_SRC
 
-** 选择后端： M-x ~english-teacher-choose-backend~ 
-** 切换后端:  M-x ~english-teacher-next-backend~
-建议绑定一个方便的快捷键，如果一个翻译不准确，可以迅速切换到另一个后端。
+** 命令
+- ~english-teacher-choose-backend~ 选择后端。
+- ~english-teacher-next-backend~ 切到下一个后端, 建议绑定一个方便的快捷键，如果一个翻译不准确，可以迅速切换到另一个后端。
+- ~english-teacher-smart-translation~ 智能翻译，当光标处于字符串或者注释里面，会优先翻译字符串或注释，否则就翻译当前句子。
 
 ** 自定义后端  
 
