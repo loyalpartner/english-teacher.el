@@ -34,6 +34,11 @@
 
 (defvar english-teacher-timer nil)
 
+(defcustom english-teacher-enabled-function
+  '(lambda (_) t)
+  ""
+  :type 'function)
+
 (defmacro english-teacher-lazy-execute (func args)
   `(setq english-teacher-timer
          (run-with-idle-timer
@@ -47,7 +52,7 @@
   (require (alist-get english-teacher-backend english-teacher-backends-alist))
   (let* ((sentence (english-teacher-sentence-at-point))
          cache func args)
-    (when sentence
+    (when (and sentence (apply english-teacher-enabled-function '(sentence)))
       (setq cache (english-teacher-get-cache sentence))
       (setq func (if cache english-teacher-show-result-function #'english-teacher-translate-sentence))
       (setq args (if cache (list sentence cache) (list sentence)))
