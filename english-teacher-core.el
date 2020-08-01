@@ -41,14 +41,11 @@
 
 (defun english-teacher-disabled-p ()
   ""
-  (let* ((func-or-list english-teacher-disabled-functions))
-    (and (cl-some #'(lambda (x)
-                      (if (functionp x)
-                          (funcall x)
-                        nil))
-                  (cond ((functionp func-or-list) (list func-or-list))
-                        ((listp func-or-list) func-or-list)
-                        (t nil))))))
+  (let* ((disabled-functions
+          (if (functionp english-teacher-disabled-functions)
+              (list english-teacher-disabled-functions)
+            english-teacher-disabled-functions)))
+    (seq-some #'funcall disabled-functions)))
 
 (defmacro english-teacher-lazy-execute (func args)
   `(setq english-teacher-timer
