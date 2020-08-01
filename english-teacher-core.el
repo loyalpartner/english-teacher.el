@@ -143,12 +143,10 @@
   "Select the next backend"
   (interactive)
   (let* ((backends (mapcar #'car english-teacher-backends-alist))
-         (backend english-teacher-backend)
-         (backend-index (seq-position backends backend)))
+         (backend english-teacher-backend))
     (setq english-teacher-backend
-          (if (< backend-index (- (length backends) 1))
-              (elt backends (+ backend-index 1))
-            (elt backends 0)))
+          (or (second (member backend backends))
+              (first backends)))
     (english-teacher-follow-mode-translate)))
 
 (defun english-teacher-in-comment-p ()
