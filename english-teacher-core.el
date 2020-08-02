@@ -39,6 +39,11 @@
   :type '(list function)
   :local t)
 
+(defcustom english-teacher-get-function
+  'english-teacher-sentence-at-point
+  ""
+  :type 'function)
+
 (defun english-teacher-disabled-p ()
   ""
   (let* ((disabled-functions
@@ -58,7 +63,7 @@
   (when english-teacher-timer (cancel-timer english-teacher-timer))
 
   (require (alist-get english-teacher-backend english-teacher-backends-alist))
-  (let* ((sentence (english-teacher-sentence-at-point))
+  (let* ((sentence (funcall english-teacher-get-function))
          cache func args)
     (when (and sentence
                (not (english-teacher-disabled-p)))
