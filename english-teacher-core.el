@@ -42,7 +42,8 @@
 (defcustom english-teacher-get-function
   'english-teacher-sentence-at-point
   ""
-  :type 'function)
+  :type 'function
+  :local t)
 
 (defun english-teacher-disabled-p ()
   ""
