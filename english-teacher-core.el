@@ -25,7 +25,7 @@
 
 (define-minor-mode english-teacher-follow-mode
   "follow mode"
-  :lighter ""
+  :lighter " etf"
   :keymap (let ((map (make-sparse-keymap))) map)
   (cond (english-teacher-follow-mode (progn
                                       (setq-local sentence-end-without-space "。．？！?!;；")
