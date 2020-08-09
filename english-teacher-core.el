@@ -28,7 +28,8 @@
   :lighter " etf"
   :keymap (let ((map (make-sparse-keymap))) map)
   (cond (english-teacher-follow-mode (progn
-                                      (setq-local sentence-end-without-space "。．？！?!;；")
+                                      ;; (setq-local sentence-end-without-space "。．？！?!;；")
+                                      (setq-local sentence-end "[。.？！?!;；][^\"]")
                                       (add-hook 'post-command-hook #'english-teacher-follow-mode-translate nil t)))
         (t (remove-hook 'post-command-hook #'english-teacher-follow-mode-translate t))))
 
