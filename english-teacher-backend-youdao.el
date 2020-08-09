@@ -1,8 +1,11 @@
 ;;; -*- lexical-binding: t;no-byte-compile:t;  -*-
-(defconst english-teacher-backend-youdao-api-host "http://fanyi.youdao.com/translate_o?smartresult=dict&smartresult=rule")
+(defconst english-teacher-backend-youdao-api-host
+  "http://fanyi.youdao.com/translate_o?smartresult=dict&smartresult=rule")
 
 ;; https://zhuanlan.zhihu.com/p/95036714
-(defcustom english-teacher-backend-magic-string "mmbP%A-r6U3Nw(n]BjuEU" "magic string")
+(defvar english-teacher-backend-youdao-magic-string
+  nil
+  "magic string")
 
 (defun english-teacher-backend-youdao-ts ()
   (truncate (* (time-to-seconds) 1000)) )
@@ -12,9 +15,19 @@
 
 (defun english-teacher-backend-youdao-sign (text)
   (let ((salt (english-teacher-backend-youdao-salt))
-        (ts (english-teacher-backend-youdao-ts)))
-    (md5 (format "fanyideskweb%s%d%s" text salt english-teacher-backend-magic-string))))
+        (ts (english-teacher-backend-youdao-ts))
+        (magic-string (english-teacher-backend-youdao-get-magic-string)))
+    (md5 (format "fanyideskweb%s%d%s" text salt magic-string))))
 
+(defun english-teacher-backend-youdao-get-magic-string ()
+  (or english-teacher-backend-youdao-magic-string
+      (setq english-teacher-backend-youdao-magic-string
+            (let ((text (english-teacher-http-get
+                         "http://shared.ydstatic.com/fanyi/newweb/v1.0.28/scripts/newweb/fanyi.min.js")))
+              (string-match  "\"fanyideskweb\"\\+e\\+i\\+\"\\([^\"]+\\)\"" text)
+              (match-string 1 text)))))
+
+(english-teacher-backend-youdao-get-magic-string)
 
 (defun english-teacher-backend-youdao-post-data (from to text)
   (let* ((salt (number-to-string (english-teacher-backend-youdao-salt)))
