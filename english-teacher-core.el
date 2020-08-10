@@ -38,14 +38,12 @@
 
 (defcustom english-teacher-disabled-functions nil
   ""
-  :type '(list function)
-  :local t)
+  :type '(list function))
 
 (defcustom english-teacher-get-text-function
   'english-teacher-sentence-at-point
   ""
-  :type 'function
-  :local t)
+  :type 'function)
 
 (defun english-teacher-disabled-p ()
   ""
