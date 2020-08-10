@@ -27,8 +27,6 @@
               (string-match  "\"fanyideskweb\"\\+e\\+i\\+\"\\([^\"]+\\)\"" text)
               (match-string 1 text)))))
 
-(english-teacher-backend-youdao-get-magic-string)
-
 (defun english-teacher-backend-youdao-post-data (from to text)
   (let* ((salt (number-to-string (english-teacher-backend-youdao-salt)))
          (sign (english-teacher-backend-youdao-sign text))
