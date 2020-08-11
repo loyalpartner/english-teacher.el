@@ -61,7 +61,7 @@
     (setq result (alist-get 'translateResult json))
     (if result
         (setq result (mapconcat (lambda (x) (alist-get 'tgt x)) (elt result 0) ""))
-      (error "error"))
+      (error json))
     (cons text result)))
 
 ;;;###autoload

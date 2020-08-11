@@ -14,7 +14,7 @@
     (if json
         (setq result (mapconcat (lambda (x) (alist-get 'text x))
                                 (alist-get 'translations (elt json 0)) ""))
-      (error "error"))
+      (error json))
     (cons text result)))
 
 
