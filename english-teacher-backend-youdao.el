@@ -66,6 +66,6 @@
 
 ;;;###autoload
 (cl-defmethod english-teacher-translate ((text  t) (backend (eql english-teacher-backend-youdao)))
-  (english-teacher-backend-youdao-request "AUTO" "AUTO" text))
+  (english-teacher-backend-youdao-request "en" "zh-CHS" text))
 
 (provide 'english-teacher-backend-youdao)
