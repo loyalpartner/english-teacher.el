@@ -28,10 +28,13 @@
   "follow mode"
   :lighter " etf"
   :keymap (let ((map (make-sparse-keymap))) map)
-  (cond (english-teacher-follow-mode (progn
-                                      ;; (setq-local sentence-end-without-space "。．？！?!;；")
-                                      (setq-local sentence-end "[。.？！?!;；][^\"]")
-                                      (add-hook 'post-command-hook #'english-teacher-follow-mode-translate nil t)))
+  (cond (english-teacher-follow-mode
+         (progn
+           ;; (setq-local sentence-end-without-space "。．？！?!;；")
+           (setq-local sentence-end "[。.？！?!;；][^\"]")
+           (add-hook 'post-command-hook
+                     (english-teacher-debounce #'english-teacher-follow-mode-translate 0.5)
+                     nil t)))
         (t (remove-hook 'post-command-hook #'english-teacher-follow-mode-translate t))))
 
 (defvar english-teacher-timer nil)
@@ -60,9 +63,18 @@
           (lambda (args) (apply func args))
           args)))
 
-(defun english-teacher-follow-mode-translate ()
-  (when english-teacher-timer (cancel-timer english-teacher-timer))
+(defun english-teacher-debounce (func wait &rest options)
+  (let (timer)
+    (lambda ()
+      (when timer
+        (cancel-timer timer)
+        (setq timer nil))
+      (setq timer
+            (run-with-idle-timer
+             wait nil
+             (lambda () (apply func options)))))))
 
+(defun english-teacher-follow-mode-translate ()
   (require (alist-get english-teacher-backend english-teacher-backends-alist))
   (let* ((sentence (funcall english-teacher-get-text-function))
          cache func args)
@@ -71,10 +83,12 @@
       (setq cache (english-teacher-get-cache sentence))
       (setq func (if cache english-teacher-show-result-function #'english-teacher-translate-sentence))
       (setq args (if cache (list sentence cache) (list sentence)))
-      (english-teacher-lazy-execute func args))))
+
+      (apply func args))))
 
 (defun english-teacher-translate-sentence (sentence)
-  (let* ((result (english-teacher-translate sentence (alist-get english-teacher-backend english-teacher-backends-alist)))
+  (let* ((backend (alist-get english-teacher-backend english-teacher-backends-alist))
+         (result (english-teacher-translate sentence backend))
          (origin (car result))
          (translation (cdr result)))
     (engilsh-teacher-put-cache origin translation)
