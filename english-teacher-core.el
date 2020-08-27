@@ -76,13 +76,12 @@
 
 (defun english-teacher-follow-mode-translate ()
   (require (alist-get english-teacher-backend english-teacher-backends-alist))
-  (let* ((sentence (funcall english-teacher-get-text-function))
+  (let* ((text (funcall english-teacher-get-text-function))
          cache func args)
-    (when (and sentence
-               (not (english-teacher-disabled-p)))
-      (setq cache (english-teacher-get-cache sentence))
+    (when (and text (not (english-teacher-disabled-p)))
+      (setq cache (english-teacher-get-cache text))
       (setq func (if cache english-teacher-show-result-function #'english-teacher-translate-sentence))
-      (setq args (if cache (list sentence cache) (list sentence)))
+      (setq args (if cache (list text cache) (list text)))
 
       (apply func args))))
 
