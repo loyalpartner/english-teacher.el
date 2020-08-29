@@ -2,9 +2,9 @@
 
 当你在阅读英文文档时，English Teacher 可以像英语老师一样给你关心和关爱，手把手给你翻译英文句子。
 
-English Teacher 支持 youdao,bing,baidu,google 后端, 你也可以自己添加后端。
+English Teacher 支持 youdao,bing,baidu,google,tencent 后端, 你也可以自己添加后端。
 
-默认使用 google 翻译，如果你需要使用其他翻译后端
+默认使用 youdao 翻译，如果你需要使用其他翻译后端
 
 #+BEGIN_SRC emacs-lisp
 (setq english-teacher-backend 'baidu) ; 'youdao bing google baidu
