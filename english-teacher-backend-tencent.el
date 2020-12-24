@@ -11,23 +11,31 @@
 
 (defun english-teacher-backend-tencent-update-qtv-and-qtk ()
   (interactive)
-  (let ((result (english-teacher-http-get "https://fanyi.qq.com")))
-    (string-match  "var qtk = \"\\([^\"]+\\)\";" result)
-    (setq english-teacher-backend-tencent-qtk (match-string 1 result))
-    (string-match  "var qtv = \"\\([^\"]+\\)\";" result)
-    (setq english-teacher-backend-tencent-qtv (match-string 1 result)))
-  (setq english-teacher-backend-tencent-refresh-time (time-to-seconds))
-  )
+  ;; (let ((result (english-teacher-http-get "https://fanyi.qq.com")))
+  ;;   (string-match  "var qtk = \"\\([^\"]+\\)\";" result)
+  ;;   (setq english-teacher-backend-tencent-qtk (match-string 1 result))
+  ;;   (string-match  "var qtv = \"\\([^\"]+\\)\";" result)
+  ;;   (setq english-teacher-backend-tencent-qtv (match-string 1 result)))
+
+  (let ((result (english-teacher-http-post "https://fanyi.qq.com/api/reauth123f" "qtk=&qtv="))
+        json)
+    (setq json (json-read-from-string result))
+    (setq english-teacher-backend-tencent-qtk (alist-get 'qtk json))
+    (setq english-teacher-backend-tencent-qtv (alist-get 'qtv json))
+    ))
+
+
 
 (defun english-teacher-backend-tencent-post-data (from to text)
   (let* ((qtv english-teacher-backend-tencent-qtv)
          (qtk english-teacher-backend-tencent-qtk)
-         (uuid (format "translate_uuid%f" (time-to-seconds)))
+         (uuid (format "translate_uuid%d" (floor (* (time-to-seconds) 1000))))
          (refresh-time english-teacher-backend-tencent-refresh-time))
-    (when (or (not qtv)
-              (> (- (time-to-seconds) refresh-time)
-                 (* 60 60)))
-      (english-teacher-backend-tencent-update-qtv-and-qtk))
+    ;; (when (or (not qtv)
+    ;;           (> (- (time-to-seconds) refresh-time)
+    ;;              (* 60 60)))
+    ;;   (english-teacher-backend-tencent-update-qtv-and-qtk))
+    (english-teacher-backend-tencent-update-qtv-and-qtk)
     (english-teacher-format-query-string
      `(("source"     . ,from)
        ("target"     . ,to)
@@ -61,5 +69,3 @@
   (english-teacher-backend-tencent-request "auto" "zh" text))
 
 (provide 'english-teacher-backend-tencent)
-
-
