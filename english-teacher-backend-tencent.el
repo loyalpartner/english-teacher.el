@@ -11,12 +11,6 @@
 
 (defun english-teacher-backend-tencent-update-qtv-and-qtk ()
   (interactive)
-  ;; (let ((result (english-teacher-http-get "https://fanyi.qq.com")))
-  ;;   (string-match  "var qtk = \"\\([^\"]+\\)\";" result)
-  ;;   (setq english-teacher-backend-tencent-qtk (match-string 1 result))
-  ;;   (string-match  "var qtv = \"\\([^\"]+\\)\";" result)
-  ;;   (setq english-teacher-backend-tencent-qtv (match-string 1 result)))
-
   (let ((result (english-teacher-http-post "https://fanyi.qq.com/api/reauth123f" "qtk=&qtv="))
         json)
     (setq json (json-read-from-string result))
@@ -31,10 +25,6 @@
          (qtk english-teacher-backend-tencent-qtk)
          (uuid (format "translate_uuid%d" (floor (* (time-to-seconds) 1000))))
          (refresh-time english-teacher-backend-tencent-refresh-time))
-    ;; (when (or (not qtv)
-    ;;           (> (- (time-to-seconds) refresh-time)
-    ;;              (* 60 60)))
-    ;;   (english-teacher-backend-tencent-update-qtv-and-qtk))
     (english-teacher-backend-tencent-update-qtv-and-qtk)
     (english-teacher-format-query-string
      `(("source"     . ,from)
@@ -42,7 +32,9 @@
        ("sourceText" . ,text)
        ("qtv"        . ,qtv)
        ("qtk"        . ,qtk)
-       ("sessionUuid". ,uuid)))))
+       ("sessionUuid". ,uuid)))
+    
+    ))
 
 ;;;###autoload
 (defun english-teacher-backend-tencent-request (from to text)
