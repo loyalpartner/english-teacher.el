@@ -90,7 +90,8 @@
          (result (english-teacher-translate sentence backend))
          (origin (car result))
          (translation (cdr result)))
-    (engilsh-teacher-put-cache origin translation)
+    (unless (string-empty-p translation)
+      (engilsh-teacher-put-cache origin translation))
     (funcall english-teacher-show-result-function origin translation)))
 
 
