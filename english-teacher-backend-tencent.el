@@ -9,32 +9,37 @@
 
 (defvar english-teacher-backend-tencent-refresh-time nil "")
 
+(defun english-teacher-backend-get-reauth-url ()
+  (let ((result (english-teacher-http-get "https://fanyi.qq.com")))
+    (string-match  "var reauthuri = \"\\([^\"]+\\)\";" result)
+    (match-string 1 result)))
+
 (defun english-teacher-backend-tencent-update-qtv-and-qtk ()
   (interactive)
-  (let ((result (english-teacher-http-post "https://fanyi.qq.com/api/reauth123f" "qtk=&qtv="))
-        json)
+  (let* ((reauth-url (english-teacher-backend-get-reauth-url))
+         (result (english-teacher-http-post (format "https://fanyi.qq.com/api/%s" reauth-url) "qtk=&qtv="))
+         json)
     (setq json (json-read-from-string result))
     (setq english-teacher-backend-tencent-qtk (alist-get 'qtk json))
     (setq english-teacher-backend-tencent-qtv (alist-get 'qtv json))
-    ))
-
-
+    (setq english-teacher-backend-tencent-refresh-time (time-to-seconds))))
 
 (defun english-teacher-backend-tencent-post-data (from to text)
   (let* ((qtv english-teacher-backend-tencent-qtv)
          (qtk english-teacher-backend-tencent-qtk)
          (uuid (format "translate_uuid%d" (floor (* (time-to-seconds) 1000))))
          (refresh-time english-teacher-backend-tencent-refresh-time))
-    (english-teacher-backend-tencent-update-qtv-and-qtk)
+
+    (when (or (not refresh-time)
+              (> (- (time-to-seconds) refresh-time) (* 60 2)))
+      (english-teacher-backend-tencent-update-qtv-and-qtk))
     (english-teacher-format-query-string
      `(("source"     . ,from)
        ("target"     . ,to)
        ("sourceText" . ,text)
        ("qtv"        . ,qtv)
        ("qtk"        . ,qtk)
-       ("sessionUuid". ,uuid)))
-    
-    ))
+       ("sessionUuid". ,uuid)))))
 
 ;;;###autoload
 (defun english-teacher-backend-tencent-request (from to text)
