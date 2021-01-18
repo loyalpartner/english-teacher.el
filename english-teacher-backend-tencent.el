@@ -31,7 +31,7 @@
          (refresh-time english-teacher-backend-tencent-refresh-time))
 
     (when (or (not refresh-time)
-              (> (- (time-to-seconds) refresh-time) (* 60 2)))
+              (> (- (time-to-seconds) refresh-time) 20))
       (english-teacher-backend-tencent-update-qtv-and-qtk))
     (english-teacher-format-query-string
      `(("source"     . ,from)

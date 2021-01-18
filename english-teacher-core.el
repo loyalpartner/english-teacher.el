@@ -31,7 +31,8 @@
   (cond (english-teacher-follow-mode
          (progn
            ;; (setq-local sentence-end-without-space "。．？！?!;；")
-           (setq-local sentence-end "[。.？！?!;；][^\"]")
+           ;; (setq-local sentence-end-without-space "。？．！! ; ；")
+           ;; (setq-local sentence-end "[。.？！?!;；][^\"]")
            (add-hook 'post-command-hook
                      (english-teacher-debounce #'english-teacher-follow-mode-translate 0.5)
                      nil t)))
