@@ -24,6 +24,9 @@
   ""
   :type 'function)
 
+(defvar english-teacher-post-command-hooker
+  (english-teacher-debounce #'english-teacher-follow-mode-translate 0.5) "")
+
 (define-minor-mode english-teacher-follow-mode
   "follow mode"
   :lighter " etf"
@@ -33,10 +36,8 @@
            ;; (setq-local sentence-end-without-space "。．？！?!;；")
            ;; (setq-local sentence-end-without-space "。？．！! ; ；")
            ;; (setq-local sentence-end "[。.？！?!;；][^\"]")
-           (add-hook 'post-command-hook
-                     (english-teacher-debounce #'english-teacher-follow-mode-translate 0.5)
-                     nil t)))
-        (t (remove-hook 'post-command-hook #'english-teacher-follow-mode-translate t))))
+           (add-hook 'post-command-hook english-teacher-post-command-hooker nil t)))
+        (t (remove-hook 'post-command-hook english-teacher-post-command-hooker t))))
 
 (defvar english-teacher-timer nil)
 
@@ -135,7 +136,7 @@
 (cl-defmethod english-teacher-transform-text ((text t) (mode (eql Info-mode)))
   (setq text (replace-regexp-in-string "\\*Note \\([^:]*\\)::" "See \\1" text))
   (setq text (replace-regexp-in-string "^[\\*-]{2,}" "" text)) ; remove ****** or ------------
-  (setq text (replace-regexp-in-string "^\s*-- .*$" "" text)) ; -- function 
+  (setq text (replace-regexp-in-string "^\s*-- .*$" "" text)) ; -- function
   (setq text (replace-regexp-in-string "\s+" "\n" text))
   (setq text (replace-regexp-in-string "^[=\\*-]+$" "" text)) ; ============ -----------
   (setq text (replace-regexp-in-string "CR-LF" "CRLF" text)) ;
