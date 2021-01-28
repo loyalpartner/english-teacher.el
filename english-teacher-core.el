@@ -24,6 +24,17 @@
   ""
   :type 'function)
 
+(defun english-teacher-debounce (func wait &rest options)
+  (let (timer)
+    (lambda ()
+      (when timer
+        (cancel-timer timer)
+        (setq timer nil))
+      (setq timer
+            (run-with-idle-timer
+             wait nil
+             (lambda () (apply func options)))))))
+
 (defvar english-teacher-post-command-hooker
   (english-teacher-debounce #'english-teacher-follow-mode-translate 0.5) "")
 
@@ -65,16 +76,6 @@
           (lambda (args) (apply func args))
           args)))
 
-(defun english-teacher-debounce (func wait &rest options)
-  (let (timer)
-    (lambda ()
-      (when timer
-        (cancel-timer timer)
-        (setq timer nil))
-      (setq timer
-            (run-with-idle-timer
-             wait nil
-             (lambda () (apply func options)))))))
 
 (defun english-teacher-follow-mode-translate ()
   (require (alist-get english-teacher-backend english-teacher-backends-alist))
