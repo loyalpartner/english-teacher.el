@@ -1,0 +1,31 @@
+name: Gitee repos mirror periodic job
+
+on:
+  pull_request:
+    paths:
+    - '.github/workflows/gitee-repos-mirror.yml'
+    - '!.github/workflows/spark-sync.yaml'
+    # Runs at every pull requests submitted in master branch 
+    branches: [ master ]
+  schedule:
+    # Runs at 01:00 UTC (9:00 AM Beijing) every day
+    - cron:  '0 1 * * *'
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+
+    - name: Mirror the Github organization repos to Gitee.
+      uses: Yikun/hub-mirror-action@v1.0
+      with:
+        src: github/loyalpartner
+        dst: gitee/bbblili
+        dst_key: ${{ secrets.GITEE_PRIVATE_KEY }}
+        dst_token:  ${{ secrets.GITEE_TOKEN }}
+        account_type: user
+        timeout: 600
+        debug: true
+        force_update: true
