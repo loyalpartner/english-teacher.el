@@ -57,4 +57,3 @@ English Teacher 支持 youdao,bing,baidu,google,tencent 后端, 你也可以自�
 
 (setq english-teacher-show-result-function 'english-teacher-eldoc-show-result-function)
 #+end_src
-
