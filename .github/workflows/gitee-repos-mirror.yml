@@ -15,5 +15,5 @@ jobs:
           dst: gitee/bbblili
           dst_key: ${{ secrets.GITEE_PRIVATE_KEY }}
           dst_token: ${{ secrets.GITEE_TOKEN }}
-          white_list: "english-teacher.el"
+          static_list: "english-teacher.el"
           debug: true
