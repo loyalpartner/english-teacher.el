@@ -24,8 +24,10 @@
   ""
   :type 'function)
 
+(defvar english-teacher-timer nil "")
+
 (defun english-teacher-debounce (func wait &rest options)
-  (let (timer)
+  (let ((timer english-teacher-timer))
     (lambda ()
       (when timer
         (cancel-timer timer)
@@ -48,7 +50,8 @@
            ;; (setq-local sentence-end-without-space "。？．！! ; ；")
            ;; (setq-local sentence-end "[。.？！?!;；][^\"]")
            (add-hook 'post-command-hook english-teacher-post-command-hooker nil t)))
-        (t (remove-hook 'post-command-hook english-teacher-post-command-hooker t))))
+        (t (progn (remove-hook 'post-command-hook english-teacher-post-command-hooker t)
+                  (when english-teacher-timer (cancel-timer english-teacher-timer))))))
 
 (defvar english-teacher-timer nil)
 
