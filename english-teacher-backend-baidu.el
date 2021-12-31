@@ -47,6 +47,27 @@
     
     `(,text . ,result)))
 
+(cl-defmethod et-translate ((text  t)
+                            (backend (eql baidu))
+                            (on-translation-completed t))
+  (et-send-request
+   (make-translation-request
+    :url (english-teacher-backend-baidu--build-url "en" "zh" text)
+    :method "GET")
+   (lambda (body)
+     (et-baidu-on-request-completed text body on-translation-completed))))
+
+(defun et-baidu-on-request-completed (origin-text body on-translation-completed)
+  (let (json result)
+    (setq json (json-read-from-string body))
+    (setq result  (alist-get 'trans_result json))
+    (unless result
+      (error (alist-get 'error_msg json)))
+    (setq result
+          (mapconcat
+           (lambda (x)
+             (alist-get 'dst x)) result ""))
+    (apply on-translation-completed `('baidu ,origin-text ,result))))
 
 ;;;###autoload
 (cl-defmethod english-teacher-translate ((text  t) (backend (eql english-teacher-backend-baidu)))

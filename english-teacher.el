@@ -4,4 +4,3 @@
 (require 'english-teacher-core)
 
 (provide 'english-teacher)
-
