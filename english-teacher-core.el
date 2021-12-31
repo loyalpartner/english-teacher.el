@@ -15,11 +15,7 @@
   :type 'symbol)
 
 (defcustom english-teacher-translation-cache-alist
-  (mapcar (lambda (backend)
-            (cons
-             (car backend)
-             (make-hash-table :test 'equal)))
-          english-teacher-backends-alist)
+  (mapcar (lambda (backend) (cons (car backend) (make-hash-table :test 'equal))) english-teacher-backends-alist)
   ""
   :type '(list))
 
@@ -50,6 +46,9 @@
   :keymap (let ((map (make-sparse-keymap))) map)
   (cond (english-teacher-follow-mode
          (progn
+           ;; (setq-local sentence-end-without-space "。．？！?!;；")
+           ;; (setq-local sentence-end-without-space "。？．！! ; ；")
+           ;; (setq-local sentence-end "[。.？！?!;；][^\"]")
            (add-hook 'post-command-hook english-teacher-post-command-hooker nil t)))
         (t (progn (remove-hook 'post-command-hook english-teacher-post-command-hooker t)
                   (when english-teacher-timer (cancel-timer english-teacher-timer))))))
@@ -241,66 +240,5 @@
   (let ((english-teacher-show-result-function 'english-teacher-default-show-result-function))
     (english-teacher-translate-sentence text)
     (when (region-active-p) (deactivate-mark))))
-
-
-(defun et-send-request(request on-request-completed)
-  (let* ((url-request-method (translation-request-method request))
-         (url-request-extra-headers (translation-request-headers request))
-         (url-request-data (translation-request-payload request)))
-    (url-retrieve
-     (translation-request-url request)
-     'et--read-body
-     `(,on-request-completed)
-     'silent)))
-
-(defun et--read-body (status on-request-completed)
-  (with-current-buffer (current-buffer)
-    (set-buffer-multibyte t)
-    (goto-char (point-min))
-    (unless (string-match "200 OK" (buffer-string))
-      (error "Problem connecting to the server"))
-    (re-search-forward "^$" nil 'move)
-    (let ((message (buffer-substring-no-properties (point) (point-max))))
-      (apply on-request-completed `(,message))
-      (kill-buffer))))
-
-(defvar et-translations-alist
-  ;; (mapcar (lambda (backend)
-  ;;           (cons
-  ;;            (car backend)
-  ;;            (make-hash-table :test 'equal)))
-  ;;         english-teacher-backends-alist)
-  '(baidu  ,(make-hash-table :test 'equal))
-  ""
-  :type '(list))
-
-(cl-defstruct (translation-specifics (:constructor make-translation-specifics))
-  (source "zh")
-  (target "en")
-  (engine "baidu")
-  (completed nil)
-  (origin-text nil)
-  (translation nil))
-
-(cl-defstruct (translation-request(:constructor make-translation-request))
-  url
-  method
-  payload
-  headers)
-
-;;;###autoload
-(cl-defgeneric et-translate (text backend &optional on-translation-completed)
-  (cons "orgin" "translation"))
-
-(defun et-translate-text (text)
-  (et-translate text 'baidu 'et--on-translation-completed))
-
-(et-translate-text "hello world!")
-(defun et--on-translation-completed (backend origin-text translation)
-  (let ((specific-translations (alist-get backend et-translations-alist)))
-    (puthash origin-text translation specific-translations)
-    (apply english-teacher-show-result-function `(,origin-text  ,translation))))
-
-
 
 (provide 'english-teacher-core)
